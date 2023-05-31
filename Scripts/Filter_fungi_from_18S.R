@@ -10,4 +10,4 @@ otu_with_tax = otu_with_tax[,c(1:141)]
 
 otu_without_fungi = otu_with_tax %>% filter(!grepl('Fungi', taxonomy))
 
-write.csv2(otu_without_fungi, 'otu_18S_4350_without_fungi.csv')
+write.csv2(otu_without_fungi, 'Data/otu_18S_4350_without_fungi.csv')
