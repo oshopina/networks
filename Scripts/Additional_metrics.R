@@ -1,31 +1,103 @@
 ## Script for calculating new metrics for network analysis 
+
+## Load required libraries
 library(SpiecEasi)
 library(igraph)
+library(centiserve)
+library(dplyr)
 
-load("Data/SpiecEasi_results/MA_postSpiecEasi_g4.ABS.Rdata")
+## List RDS files in the directory
+files <- list.files(path = "Data/SpiecEasi_results_16S_ITS/", pattern = "^net*", full.names = TRUE)
+data_list <- list()
 
-#extract the adjacency matrix from the spiec.easi object
-spieceasi.matrix.g4 <- symBeta(getOptBeta(spieceasi.multinet.g4), mode='maxabs')
-spieceasi.matrix.g4 <- as.matrix(spieceasi.matrix.g4)
+## Read RDS files and store in a list
+for (file in files) {
+  data <- readRDS(file)
+  file_name <- basename(file)
+  file_name <- tools::file_path_sans_ext(file_name)
+  data_list[[file_name]] <- data
+}
 
-#add correct row names from the otu table
-otu.names.g4 <- c(colnames(otu.table.16S.g4.slim), colnames(otu.table.ITS.g4.slim))
-rownames(spieceasi.matrix.g4) <- otu.names.g4
-colnames(spieceasi.matrix.g4) <- otu.names.g4
+## Calculate centrality metrics for each network
+otu_metrics <- list()
 
-#build a weighted network from the adjacency matrix
-net.g4 <- graph.adjacency(spieceasi.matrix.g4,mode = "undirected", weighted = TRUE, diag = FALSE)
-V(net.g4)$name <- otu.names.g4
+## Loop through the files
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+  # Extract the number after "g" in the filename
+  g_number <- i
+  
+  # Construct the variable names based on the g_number
+  net_var <- paste0("net_g", g_number)
+  net_dist_var <- paste0("net_g", g_number, "_dist")
+  net_abs_var <- paste0("net_g", g_number, "_abs")
+  
+  # Get the network objects using the constructed variable names
+  net_g <- data_list[[net_var]]
+  net_g_dist <- data_list[[net_dist_var]]
+  net_g_abs <- data_list[[net_abs_var]]
+  
+  # Calculate the centrality metrics
+  result <- data.frame(
+    degree = degree(net_g),
+    alpha_centrality = alpha.centrality(net_g),
+    strength = strength(net_g_abs),
+    betweenness = betweenness(net_g_dist, v = V(net_g_dist)),
+    closeness = closeness(net_g_dist),
+    transitivity = transitivity(net_g, type = 'localundirected'),
+    eigen_centrality = eigen_centrality(net_g_dist)$vector,
+    page_rank = page.rank(net_g_dist)$vector,
+    bottleneck = bottleneck(net_g_dist, v = V(net_g_dist)),
+    authority_score = authority_score(net_g)$vector,
+    hub_score = hub_score(net_g)$vector
+  )
+  
+  # Save the resulting list for the file
+  otu_metrics[[as.character(i)]] <- result
+}
 
-#convert the weighted network to a separate weighted network
-net.g4.dist <- net.g4
-max(abs(E(net.g4.dist)$weight))
-weights.g4.dist <-  1 - abs(E(net.g4.dist)$weight)
-E(net.g4.dist)$weight <- weights.g4.dist
+## Merge tables by metric
+tables_by_metric <- list()
 
-#convert the weighted network to a separate absolute network
-net.g4.abs <- net.g4
-E(net.g4.abs)$weight <- abs(E(net.g4.abs)$weight)
+# Iterate over the column names of the '4' table in otu_metrics
+for (i in colnames(otu_metrics$'4')) {
+  table_names <- c('4', '45', '5', '55', '6', '65', '7')
+  
+  # Extract the column of interest from each table
+  table_list <- lapply(table_names, function(table_num) {
+    otu_metrics[[table_num]] %>% select(matches(i))
+  })
+  
+  # Add row names as a column to each table
+  table_list <- lapply(table_list, function(table) {
+    table$row_names <- rownames(table)
+    table
+  })
+  
+  # Set the names of the new list based on the original table names
+  names(table_list) <- table_names
+  
+  # Rename the metric column in each table with the corresponding suffix
+  table_list <- lapply(names(table_list), function(table_name) {
+    suffix <- gsub("[^0-9]", "", table_name)  # Extract the numeric suffix from the table name
+    table <- table_list[[table_name]]
+    colnames(table)[colnames(table) == i] <- paste0(i, "_", table_name)
+    table
+  })
+  
+  # Merge the columns of all tables by row names with custom suffixes for duplicate columns
+  merged_table <- Reduce(function(x, y) merge(x, y, by = "row_names", all = TRUE),
+                         table_list)
+  
+  # Store the merged table in tables_by_metric
+  tables_by_metric[[i]] <- merged_table
+}
+
+
+
+
+##Important nodes
+
+
 
 # greedy method (hiearchical, fast method)
 c1 = cluster_fast_greedy(net.g4.abs)
@@ -41,19 +113,8 @@ l = layout_in_circle(net.g4.abs)
 plot(c1, net.g4.abs, layout = l)
 plot_dendrogram(c1)
 
-hubs = hub_score(net.g4.abs)
-sort(hubs$vector)
-sort(degree(net.g4.abs))
-sort(closeness(net.g4.dist))
-sort(betweenness(net.g4.dist,v = V(net.g4.dist)))
-
 a = cluster_spinglass(net.g4)
 
-# Calculate degree centrality
-degree <- degree(net.g4)
-
-# Calculate betweenness centrality
-betweenness <- betweenness(net.g4.dist)
 
 # Define the roles based on centrality measures and community membership
 peripherals <- V(net.g4)$name[degree <= quantile(degree, 0.25)]
@@ -61,11 +122,7 @@ connectors <- V(net.g4)$name[betweenness >= quantile(betweenness, 0.75) & degree
 module_hubs <- V(net.g4)$name[degree > quantile(degree, 0.75) & !V(net.g4)$name %in% connectors]
 network_hubs <- V(net.g4)$name[degree > quantile(degree, 0.75)]
 
-# Calculate closeness centrality
-closeness <- closeness(net.g4.dist)
 
-# Calculate eigenvector centrality
-eigenvector <- eigen_centrality(net.g4)$vector
 
 # Combine network measures into a data frame
 network_measures <- data.frame(
