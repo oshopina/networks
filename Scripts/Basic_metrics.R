@@ -40,9 +40,9 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   result <- data.frame(
     degree = degree(net_g),
     alpha_centrality = alpha.centrality(net_g),
-    strength = strength(net_g_abs),
+    strength = strength(net_g),
     betweenness = betweenness(net_g_dist, v = V(net_g_dist)),
-    closeness = closeness(net_g_dist),
+    closeness = closeness(net_g),
     transitivity = transitivity(net_g, type = 'localundirected'),
     eigen_centrality = eigen_centrality(net_g_dist)$vector,
     page_rank = page.rank(net_g_dist)$vector,
@@ -99,8 +99,18 @@ violin_plots = list()
 for (i in names(tables_by_metric)) {
   df_long <- tidyr::pivot_longer(tables_by_metric[[i]], 
                                  cols = -row_names, names_to = "sample", values_to = "value")
+  anova_result = anova(lm(value ~ sample, data = df_long))
+  p_value = anova_result$`Pr(>F)`[1]
+  
+  # Round the p-value and check if it's equal to 0
+  rounded_p_value <- round(p_value, 4)
+  if (rounded_p_value == 0) {
+    rounded_p_value <- "< 0.001"
+  } else {
+    rounded_p_value <- paste("= ", rounded_p_value)
+  }
   # Plot the violin plot
-  plot = ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+  plot <- ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
     geom_violin(trim = 0) +
     xlab("pH") +
     ylab(i) +
@@ -109,12 +119,18 @@ for (i in names(tables_by_metric)) {
                                  "#FDCF7D", "#AEDEA1", "#68C2A3",
                                  "#388FB8")) +
     scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4')) +
-    guides(fill = 'none')
+    guides(fill = 'none') +
+    annotate("text", x = 1, y = max(df_long$value, na.rm = T),
+             label = paste("p-value", rounded_p_value, "(ANOVA)"),
+             hjust = -0.1, vjust = 1, color = "black", size = 4)
   
   # Add the plot to the list
   violin_plots[[i]] <- plot
   }
-rm(df_long, plot)
-                                           
-
-
+rm(df_long, plot, anova_result, i, p_value, rounded_p_value)
+    
+pdf("Figures/violin_plots.pdf")
+for (plot in violin_plots) {
+  print(plot)
+}
+dev.off()
