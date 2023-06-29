@@ -9,18 +9,25 @@ library(gridExtra)
 #############Test different modularity methods #####################
 
 # Define the cluster methods you want to use
+
 cluster_methods <- c("louvain", "infomap", "walktrap", "betweenness", "propagation",
                      "fastgreedy", "leading.eigenvector", "spinglass", "optimal", "leiden")
 
-# Create an empty list to store the plots
-plot_list <- list()
+# Create an empty list to store the plots and clustering results
+modularity_plots <- list()
+clustering_results <- list()
 
 # Iterate over each cluster method
 for (method in cluster_methods) {
+  cat("Running clustering method:", method, "\n")
+  
   modularity_c <- c()
   n_modules_c <- c()
+  clustering_result <- list()
   
   for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+    cat("  Running clustering for i =", i, "\n")
+    
     net_g_var <- paste0("net_g", i, "_dist")
     net_g <- data_list[[net_g_var]]
     
@@ -41,6 +48,9 @@ for (method in cluster_methods) {
     
     modularity_c[as.character(i)] <- modularity
     n_modules_c[as.character(i)] <- n_modules
+    
+    # Store clustering result in a list
+    clustering_result[[as.character(i)]] <- cluster_result
   }
   
   modularity_test <- data.frame(modularity_c, n_modules_c)
@@ -58,8 +68,9 @@ for (method in cluster_methods) {
   
   combined_plot <- grid.arrange(plot_mod, plot_n, nrow = 1)
   
-  # Save the plot to the list
-  plot_list[[method]] <- combined_plot
+  # Save the plot and clustering results to the respective lists
+  modularity_plots[[method]] <- combined_plot
+  clustering_results[[method]] <- clustering_result
 }
 
 
@@ -89,7 +100,13 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   modularity_plots[[i]] = plot
 }
 
+pdf("modularity_plots.pdf")
+for (plot in modularity_plots) {
+  print(plot)
+}
+dev.off()
 
+saveRDS(clustering_results, "clustering_results.rds")
 
 
 average.path.length(data_list$net_g4_dist)

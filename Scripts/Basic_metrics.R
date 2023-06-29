@@ -129,8 +129,8 @@ for (i in names(tables_by_metric)) {
   }
 rm(df_long, plot, anova_result, i, p_value, rounded_p_value)
     
-pdf("Figures/violin_plots.pdf")
-for (plot in violin_plots) {
-  print(plot)
-}
-dev.off()
+# pdf("Figures/violin_plots.pdf")
+# for (plot in violin_plots) {
+#   print(plot)
+# }
+# dev.off()
