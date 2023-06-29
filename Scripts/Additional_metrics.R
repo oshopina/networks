@@ -73,6 +73,14 @@ for (method in cluster_methods) {
   clustering_results[[method]] <- clustering_result
 }
 
+pdf("Figures/modularity_plots.pdf")
+for (plot in modularity_plots) {
+  print(plot)
+}
+dev.off()
+
+saveRDS(clustering_results, "Data/Shared_data/clustering_results.rds")
+
 
 
 modularity_plots = list()
@@ -99,15 +107,6 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   plot = recordPlot()
   modularity_plots[[i]] = plot
 }
-
-pdf("modularity_plots.pdf")
-for (plot in modularity_plots) {
-  print(plot)
-}
-dev.off()
-
-saveRDS(clustering_results, "clustering_results.rds")
-
 
 average.path.length(data_list$net_g4_dist)
 # Diameter
