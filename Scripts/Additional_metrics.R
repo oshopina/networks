@@ -25,6 +25,7 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   
   degree_histograms[[as.character(i)]] <- plot
 }
+rm(net_g, net_g_var, plot, degree_distribution, i)
 
 ## Plot degree distribution
 # Set the layout to display plots vertically
@@ -38,6 +39,7 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
        xlab = "Degree", ylab = "Frequency", 
        main = paste("pH", i, "Degree Distribution Histogram"))
 }
+rm(i)
 
 ########################## One per sample metrics ##############################
 
@@ -63,9 +65,11 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   density_all[as.character(i)] <- density
 }
 
-## Plot metrics
 one_per_sample <- data.frame(path_all, diameter_all, density_all, rownames = names(path_all))
 
+rm(density, density_all, diameter, diameter_all, i, net_g_var, path, path_all, net_g)
+
+## Plot metrics
 par(mfrow = c(3, 1))
 par(mar = c(2, 2, 1, 1))
 
@@ -86,4 +90,6 @@ density_plot <- ggplot(one_per_sample, aes(x = rownames)) +
   scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
 
 # Arrange plots in a grid
-grid.arrange(path_plot, diameter_plot, density_plot, nrow = 3)
+one_per_sample_plot = grid.arrange(path_plot, diameter_plot, density_plot, nrow = 3)
+
+rm(density_plot, diameter_plot, path_plot)
