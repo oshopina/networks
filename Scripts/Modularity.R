@@ -1,4 +1,4 @@
-##Metrics with one number per sample, distribution, modularity
+##Modularity calculations
 load('Data/Shared_data/Basic_metrics.RData')
 
 library(igraph)
@@ -12,7 +12,7 @@ library(gridExtra)
 ##Calculate different cluster methods
 
 cluster_methods <- c("louvain", "infomap", "walktrap", "betweenness", "propagation",
-                     "fastgreedy", "leading.eigenvector", "spinglass", "optimal", "leiden")
+                     "fastgreedy", "leading.eigenvector", "spinglass", "leiden")
 
 clustering_results <- list()
 
@@ -23,28 +23,29 @@ for (method in cluster_methods) {
   n_modules_c <- c()
   clustering_result <- list()
   
-
-for (i in c(4, 45, 5, 55, 6, 65, 7)) {
-  cat("  Running clustering for i =", i, "\n")
   
-  net_g_var <- paste0("net_g", i, "_dist")
-  net_g <- data_list[[net_g_var]]
-  
-  cluster_result <- switch(method,
-                           louvain = cluster_louvain(net_g),
-                           infomap = cluster_infomap(net_g),
-                           walktrap = cluster_walktrap(net_g),
-                           betweenness = cluster_edge_betweenness(net_g),
-                           propagation = cluster_label_prop(net_g),
-                           fastgreedy = cluster_fast_greedy(net_g),
-                           leading.eigenvector = cluster_leading_eigen(net_g),
-                           spinglass = cluster_spinglass(net_g),
-                           optimal = cluster_optimal(net_g),
-                           leiden = cluster_leiden(net_g))
-  
-  # Store clustering result in a list
-  clustering_result[[as.character(i)]] <- cluster_result
-}
+  for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+    cat("  Running clustering for i =", i, "\n")
+    
+    net_g_var <- paste0("net_g", i, "_dist")
+    net_g <- data_list[[net_g_var]]
+    
+    cluster_result <- switch(
+      method,
+      louvain = cluster_louvain(net_g),
+      infomap = cluster_infomap(net_g),
+      walktrap = cluster_walktrap(net_g),
+      betweenness = cluster_edge_betweenness(net_g),
+      propagation = cluster_label_prop(net_g),
+      fastgreedy = cluster_fast_greedy(net_g),
+      leading.eigenvector = cluster_leading_eigen(net_g),
+      spinglass = cluster_spinglass(net_g),
+      leiden = cluster_leiden(net_g)
+    )
+    
+    # Store clustering result in a list
+    clustering_result[[as.character(i)]] <- cluster_result
+  }
   clustering_results[[method]] <- clustering_result
 }
 
@@ -93,6 +94,7 @@ for (plot in modularity_plots) {
   print(plot)
 }
 dev.off()
+
 
 modularity_plots = list()
 for (i in c(4, 45, 5, 55, 6, 65, 7)) {

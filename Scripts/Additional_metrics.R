@@ -1,66 +1,79 @@
-##Metrics with one number per sample, distribution, modularity
+##Metrics with one number per sample, degree distribution
 load('Data/Shared_data/Basic_metrics.RData')
 
 library(igraph)
 library(ggplot2)
 library(gridExtra)
 
+################## Degree distribution #######################
 
-average.path.length(data_list$net_g4_dist)
-# Diameter
-diameter <- diameter(data_list$net_g4_dist)
-# Density
-density <- graph.density(data_list$net_g4_dist)
+degree_histograms = list()
 
-##Important nodes
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+  net_g_var <- paste0("net_g", i, "_dist")
+  net_g <- data_list[[net_g_var]]
+  
+  # Degree distribution
+  degree_distribution <- degree.distribution(net_g)
+  
+  plot = hist(degree_distribution, breaks = "FD", col = "skyblue", border = "black",
+              xlim = c(0, 0.15), ylim = c(0, 50),
+              xlab = "Degree", ylab = "Frequency", 
+              main = paste("pH", i, "Degree Distribution Histogram"))
+  
+  degree_histograms[[as.character(i)]] = plot
+}
 
+# Set the layout to display plots vertically
+par(mfrow = c(length(degree_histograms), 1))
+par(mar = c(2, 2, 1, 1))
 
-# Define the roles based on centrality measures and community membership
-peripherals <- V(net.g4)$name[degree <= quantile(degree, 0.25)]
-connectors <- V(net.g4)$name[betweenness >= quantile(betweenness, 0.75) & degree > quantile(degree, 0.25)]
-module_hubs <- V(net.g4)$name[degree > quantile(degree, 0.75) & !V(net.g4)$name %in% connectors]
-network_hubs <- V(net.g4)$name[degree > quantile(degree, 0.75)]
+# Loop through the list of graphs and plot them
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+  plot(degree_histograms[[as.character(i)]], breaks = "FD", col = "skyblue", border = "black",
+       xlim = c(0, 0.20), ylim = c(0, 50),
+       xlab = "Degree", ylab = "Frequency", 
+       main = paste("pH", i, "Degree Distribution Histogram"))
+}
 
+########################## One per sample metrics ##############################
 
+path_all = c()
+diameter_all = c()
+density_all = c()
 
-# Combine network measures into a data frame
-network_measures <- data.frame(
-  Degree = degree,
-  Betweenness = betweenness,
-  Closeness = closeness,
-  Eigenvector = eigenvector
-)
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+  net_g_var <- paste0("net_g", i, "_dist")
+  net_g <- data_list[[net_g_var]]
+  
+  path = average.path.length(net_g)
+  path_all[as.character(i)] = path 
 
-# Define the thresholds for each network measure
-degree_threshold <- 15
-betweenness_threshold <- 1500
-closeness_threshold <- 0
-eigenvector_threshold <- 0.70
+  diameter = diameter(net_g)
+  diameter_all[as.character(i)] = diameter
+  
+  density = graph.density(net_g)
+  density_all[as.character(i)] = density
+}
 
-# Identify keystone OTUs based on high network measures
-keystone_otus <- row.names(network_measures[
-  network_measures$Degree >= degree_threshold &
-    network_measures$Betweenness >= betweenness_threshold &
-    network_measures$Closeness >= closeness_threshold &
-    network_measures$Eigenvector >= eigenvector_threshold,
-])
+one_per_sample = data.frame(path_all, diameter_all, density_all, rownames = names(path_all))
 
-# Create a color palette for community visualization
-community_colors <- rainbow(15)
+par(mfrow = c(3, 1))
+par(mar = c(2, 2, 1, 1))
 
-# Create a layout using the Fruchterman-Reingold algorithm
-layout <- layout_with_kk(net.g4.dist)
+path_plot = ggplot(one_per_sample, aes(x = rownames)) +
+  geom_bar(aes(y = path_all), stat = "identity") +
+  labs(title = paste("Average path length")) +
+  scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
 
-# Plot the community network
-plot(net.g4, layout = layout, vertex.size = 5, vertex.color = community_colors[membership(c1)],
-     vertex.label = NA, edge.color = "gray", main = "Community Network")
+diameter_plot = ggplot(one_per_sample, aes(x = rownames)) +
+  geom_bar(aes(y = diameter_all), stat = "identity") +
+  labs(title = paste("Diameter")) +
+  scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
 
-# Add a legend for the community colors
-legend("topright", legend = 1:num_communities, fill = community_colors, title = "Community")
+density_plot = ggplot(one_per_sample, aes(x = rownames)) +
+  geom_bar(aes(y = density_all), stat = "identity") +
+  labs(title = paste("Density")) +
+  scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
 
-
-
-
-
-# Degree distribution
-degree_distribution <- degree.distribution(net.g4)
+grid.arrange(path_plot, diameter_plot, density_plot, nrow = 3)
