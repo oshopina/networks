@@ -12,7 +12,7 @@ library(gridExtra)
 ##Calculate different cluster methods
 
 cluster_methods <- c("louvain", "infomap", "walktrap", "betweenness", "propagation",
-                     "fastgreedy", "leading.eigenvector", "spinglass", "leiden")
+                     "fastgreedy", "leading.eigenvector", "spinglass")
 
 clustering_results <- list()
 
@@ -39,8 +39,7 @@ for (method in cluster_methods) {
       propagation = cluster_label_prop(net_g),
       fastgreedy = cluster_fast_greedy(net_g),
       leading.eigenvector = cluster_leading_eigen(net_g),
-      spinglass = cluster_spinglass(net_g),
-      leiden = cluster_leiden(net_g)
+      spinglass = cluster_spinglass(net_g)
     )
     
     # Store clustering result in a list
