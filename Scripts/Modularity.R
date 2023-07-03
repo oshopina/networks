@@ -53,7 +53,7 @@ clustering_results = readRDS('Data/Shared_data/clustering_results.rds')
 
 ## Plot barcharts to compare clustering methods  
 # Create an empty list to store the plots and clustering results
-modularity_plots = list()
+clustering_plots = list()
 modularity_c = c()
 n_modules_c = c()
 
@@ -89,11 +89,11 @@ for (method in cluster_methods) {
   combined_plot = grid.arrange(plot_mod, plot_n, nrow = 1)
   
   # Save the plot and clustering results to the respective lists
-  modularity_plots[[method]] = combined_plot
+  clustering_plots[[method]] = combined_plot
 }
 
-# pdf("Figures/modularity_plots.pdf")
-# for (plot in modularity_plots) {
+# pdf("Figures/clustering_plots.pdf")
+# for (plot in clustering_plots) {
 #   plot(plot)
 # }
 # dev.off()
