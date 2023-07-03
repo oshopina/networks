@@ -1,0 +1,43 @@
+Network hubs
+$`4`
+character(0)
+
+$`45`
+[1] "B.Otu602" "B.Otu50" 
+
+$`5`
+character(0)
+
+$`55`
+character(0)
+
+$`6`
+character(0)
+
+$`65`
+character(0)
+
+$`7`
+character(0)
+
+Module Hubs
+$`4`
+[1] "B.Otu463" "B.Otu215" "B.Otu5"   "B.Otu47"  "B.Otu448" "B.Otu7"   "B.Otu327"
+
+$`45`
+[1] "B.Otu180" "B.Otu79" 
+
+$`5`
+[1] "B.Otu2461" "B.Otu51"   "B.Otu499"  "B.Otu41"  
+
+$`55`
+[1] "B.Otu451" "F.Otu319"
+
+$`6`
+[1] "B.Otu84"  "B.Otu126" "B.Otu682" "B.Otu113" "B.Otu155" "B.Otu636"
+
+$`65`
+[1] "B.Otu714"
+
+$`7`
+[1] "B.Otu1283"
