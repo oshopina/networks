@@ -1,0 +1,512 @@
+# Plot the violin plot
+ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+geom_violin(trim = 0) +
+xlab("Sample") +
+ylab("Value") +
+ggtitle("Violin Plot by Sample") +
+ylim(0, 30) +
+theme_classic() +
+scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
+"#FDCF7D", "#AEDEA1", "#68C2A3",
+"#388FB8")) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
+# Plot the violin plot
+ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+geom_violin(trim = 0) +
+xlab("pH") +
+ylab("Degree") +
+ylim(0, 30) +
+theme_classic() +
+scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
+"#FDCF7D", "#AEDEA1", "#68C2A3",
+"#388FB8")) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
+# Plot the violin plot
+ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+geom_violin(trim = 0) +
+xlab("pH") +
+ylab("Degree") +
+ylim(0, 30) +
+theme_classic() +
+scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
+"#FDCF7D", "#AEDEA1", "#68C2A3",
+"#388FB8")) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4')) +
+guides(fill = 'none')
+View(tables_by_metric)
+for (i in names(tables_by_metric)) {
+df_long <- tidyr::pivot_longer(tables_by_metric[[i]],
+cols = -row_names, names_to = "sample", values_to = "value")
+# Plot the violin plot
+ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+geom_violin(trim = 0) +
+xlab("pH") +
+ylab(i) +
+ylim(0, 30) +
+theme_classic() +
+scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
+"#FDCF7D", "#AEDEA1", "#68C2A3",
+"#388FB8")) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4')) +
+guides(fill = 'none')
+}
+# Plot the violin plot
+ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+geom_violin(trim = 0) +
+xlab("pH") +
+ylab(i) +
+ylim(0, 30) +
+theme_classic() +
+scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
+"#FDCF7D", "#AEDEA1", "#68C2A3",
+"#388FB8")) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4')) +
+guides(fill = 'none')
+# Plot the violin plot
+ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+geom_violin(trim = 0) +
+xlab("pH") +
+ylab(i) +
+theme_classic() +
+scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
+"#FDCF7D", "#AEDEA1", "#68C2A3",
+"#388FB8")) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4')) +
+guides(fill = 'none')
+View(df_long)
+violin_plots = list()
+for (i in names(tables_by_metric)) {
+df_long <- tidyr::pivot_longer(tables_by_metric[[i]],
+cols = -row_names, names_to = "sample", values_to = "value")
+# Plot the violin plot
+plot = ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
+geom_violin(trim = 0) +
+xlab("pH") +
+ylab(i) +
+theme_classic() +
+scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
+"#FDCF7D", "#AEDEA1", "#68C2A3",
+"#388FB8")) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4')) +
+guides(fill = 'none')
+# Add the plot to the list
+violin_plots[[i]] <- plot
+}
+View(violin_plots)
+violin_plots$alpha_centrality
+violin_plots$strength
+violin_plots$betweenness
+violin_plots$closeness
+View(df_long)
+violin_plots$transitivity
+violin_plots$eigen_centrality
+violin_plots$page_rank
+violin_plots$bottleneck
+violin_plots$authority_score
+violin_plots$hub_score
+# Assortativity
+assortativity <- assortativity(data_list$net.g4, types1 = "numeric")
+assortativity(data_list$net_g4)
+assortativity(data_list$net_g4, types1 = 'numeric')
+assortativity(data_list$net_g4, types1 = "numeric")
+assortativity(data_list$net_g4_dist, types1 = "numeric")
+assortativity(data_list$net_g4_abs, types1 = "numeric")
+assortativity(data_list$net_g4_dist, v = V(data_list$net_g4_dist))
+assortativity = cor(otu_metrics[[4]]$degree, use = 'pairwise.complete.obs')
+assortativity = cor(otu_metrics[['4']]$degree, use = 'pairwise.complete.obs')
+assortativity <- cor(otu_metrics[['4']]$degree, use = 'pairwise.complete.obs')
+average_path_length <-
+average.path.length(data_list$net_g4_dist)
+average_path_length <-
+average.path.length(data_list$net_g4_dist)
+average.path.length(data_list$net_g4_dist)
+distances(data_list$net_g4)
+distances(data_list$net_g4_dist)
+# Diameter
+diameter <- diameter(data_list$net_g4)
+# Diameter
+diameter <- diameter(data_list$net_g4_dist)
+# Density
+density <- graph.density(data_list$net_g4_dist)
+# Centralization
+centralization <- centralization.degree(data_list$net_g4_dist)
+View(centralization)
+# Centralization
+centralization.degree(data_list$net_g4_dist)$res
+# Centralization
+centralization.degree(data_list$net_g4)
+source("C:/Users/uqoshopi/Dropbox/Olga Shopina/Amplicon/Networks/Scripts/Basic_metrics.R")
+source("C:/Users/uqoshopi/Dropbox/Olga Shopina/Amplicon/Networks/Scripts/Basic_metrics.R")
+rm(data, file_name, file)
+rm(net_var, net_dist_var, net_abs_var, net_g, net_g_dist, net_g_abs, result, i)
+rm(df_long, plot)
+violin_plots$centralization
+save.image("C:/Users/uqoshopi/Dropbox/Olga Shopina/Amplicon/Networks/Data/Shared_data/Basic_metrics.RData")
+##Metrics with one number per sample, distribution, modularity
+load('Data/Shared_data/Basic_metrics.RData')
+cluster_greedy = cluster_fast_greedy(data_list$net_g4)
+cluster_greedy = cluster_fast_greedy(data_list$net_g4_dist)
+n_modules = length(cluster_greedy)
+n_modules = membership(cluster_greedy)
+n_modules = sizes(cluster_greedy)
+n_modules = modularuty(cluster_greedy)
+n_modules = modularity(cluster_greedy)
+membership(cluster_greedy)
+n_modules = length(cluster_greedy)
+modularity = modularity(cluster_greedy)
+l = layout_with_kk(data_list$net_g4_dist)
+plot(cluster_greedy, data_list$net_g4_dist, layout = l)
+plot_dendrogram(cluster_greedy)
+plot(cluster_greedy, data_list$net_g4_dist, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network"))
+plot(cluster_greedy, data_list$net_g4_dist, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+community_colors = rainbow(5)
+community_colors = rainbow(n_modules)
+plot(cluster_greedy, data_list$net_g4_dist, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+plot(cluster_greedy, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+plot(data_list$net_g4_dist, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+plot(data_list$net_g4, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+network = data_list$net_g4
+plot(data_list$net_g4, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+plot(network, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+cluster_greedy = cluster_fast_greedy(data_list$net_g4_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(data_list$net_g4)
+community_colors = rainbow(n_modules)
+network = data_list$net_g4
+plot(network, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+plot(network)
+cluster_greedy = cluster_fast_greedy(data_list$net_g4_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(data_list$net_g4_dist)
+community_colors = rainbow(n_modules)
+network = data_list$net_g4_dist
+plot(network, layout = layout, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+plot(network)
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+heatmap(data_list$net_g4_dist, col = heat.colors(256))
+heatmap(data_list$net_g4_dist %>% as.matrix(), col = heat.colors(256))
+View(data_list)
+View(data_list$net_g4_dist)
+plot_dendrogram(cluster_greedy)
+plot_dendrogram(cluster_greedy, cex = 0.5)
+library(dendextend)
+install.packages('dendextend')
+library(dendextend)
+# Assuming cluster_greedy is the result of hierarchical clustering
+dend <- as.dendrogram(cluster_greedy)
+# Convert dendrogram to a data frame for ggplot2
+df <- dendro_data(dend)
+library(dendextend)
+# Assuming cluster_greedy is the result of hierarchical clustering
+dend <- as.dendrogram(cluster_greedy)
+# Convert dendrogram to a data frame for ggplot2
+df <- dendro_data(dend)
+install.packages('ggdendro')
+library(ggdendro)
+# Assuming cluster_greedy is the result of hierarchical clustering
+hc <- as.hclust(cluster_greedy)
+# Convert hclust object to dendrogram object
+dend <- as.dendrogram(hc)
+# Plot the dendrogram using ggplot2 and ggdendro
+ggplot() +
+theme_void() +
+theme(plot.margin = margin(5, 5, 5, 5)) +
+ggdendrogram(dend)
+plot_dendrogram(cluster_greedy, main = "Dendrogram",
+xlab = "Observations", ylab = "Height",
+horiz = TRUE, hang = -1, cex = 0.8, font = 2,
+edge_width = 1, edge_color = "gray", edge_lty = "solid",
+node_color = "skyblue", node_frame_color = "black", node_frame_lwd = 0.5)
+# Assuming cluster_greedy is the result of hierarchical clustering
+plot_dendrogram(cluster_greedy, main = "Dendrogram", horiz = TRUE,
+hang = -1, cex = 0.8, font = 2, edge_width = 1, edge_color = "gray",
+edge_lty = "solid", node_color = "skyblue", node_frame_color = "black", node_frame_lwd = 0.5)
+title(xlab = "Observations")
+title(ylab = "Height")
+# Assuming cluster_greedy is the result of hierarchical clustering
+plot_dendrogram(cluster_greedy, main = "Dendrogram", horiz = F,
+hang = -1, cex = 0.8, font = 2, edge_width = 1, edge_color = "gray",
+edge_lty = "solid", node_color = "skyblue", node_frame_color = "black", node_frame_lwd = 0.5)
+# Assuming cluster_greedy is the result of hierarchical clustering
+plot_dendrogram(cluster_greedy, main = "Dendrogram", horiz = F,
+hang = -1, cex = 0.3, font = 2, edge_width = 1, edge_color = "gray",
+edge_lty = "solid", node_color = "skyblue", node_frame_color = "black", node_frame_lwd = 0.5)
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "Community Network")
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "pH 3.9")
+# Add text for modularity and number of clusters
+text(x = max(l[, 1]), y = max(l[, 2]), labels = paste("Modularity:", modularity), pos = 2, col = "black")
+text(x = max(l[, 1]), y = max(l[, 2]) - 0.1, labels = paste("Number of Clusters:", n_modules), pos = 2, col = "black")
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "pH 3.9")
+# Add text for modularity and number of clusters
+text(x = max(l[, 1]), y = max(l[, 2]), labels = paste("Modularity:", modularity), pos = 2, col = "black")
+text(x = max(l[, 1]), y = max(l[, 2]) - 0.1, labels = paste("Number of Clusters:", n_modules), pos = 2, col = "black")
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "pH 3.9")
+# Add text for modularity and number of clusters
+text(x = max(l[, 1]), y = max(l[, 2]), labels = paste("Modularity:", modularity), pos = 2, col = "black")
+text(x = max(l[, 1]), y = max(l[, 2]) - 0.1, labels = paste("Number of Clusters:", n_modules), pos = 2, col = "black")
+# Add text for modularity and number of clusters
+text(x = max(l[, 1]) + 0.1, y = max(l[, 2]), labels = paste("Modularity:", modularity), pos = 4, col = "black")
+text(x = max(l[, 1]) + 0.1, y = max(l[, 2]) - 0.1, labels = paste("Number of Clusters:", n_modules), pos = 4, col = "black")
+# Calculate the middle bottom position
+mid_bottom_y <- min(l[, 2])
+# Add text for modularity and number of clusters
+text(x = max(l[, 1]), y = mid_bottom_y, labels = paste("Modularity:", modularity), pos = 1, col = "black")
+text(x = max(l[, 1]), y = mid_bottom_y - 0.1, labels = paste("Number of Clusters:", n_modules), pos = 1, col = "black")
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "pH 3.9")
+# Calculate the middle bottom position
+mid_bottom_y <- min(l[, 2])
+# Add text for modularity and number of clusters
+text(x = max(l[, 1]), y = mid_bottom_y, labels = paste("Modularity:", modularity), pos = 1, col = "black")
+text(x = max(l[, 1]), y = mid_bottom_y - 0.1, labels = paste("Number of Clusters:", n_modules), pos = 1, col = "black")
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", modularity), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 3)), col = "black")
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "pH 3.9")
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 3)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot(network, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "pH 3.9")
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_fast_greedy(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = "pH 3.9")
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_fast_greedy(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = paste0('pH ', 'i'))
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_fast_greedy(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = paste0('pH ', i))
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_louvain(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = paste0('pH ', i))
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_walktrap(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = paste0('pH ', i))
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+cluster_greedy = cluster_label_prop(net_g_dist)
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_label_prop(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = paste0('pH ', i))
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_edge_betweenness(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout_with_kk(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = paste0('pH ', i))
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+modularity_plots = list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+net_dist_var <- paste0("net_g", i, "_dist")
+net_g_dist <- data_list[[net_dist_var]]
+cluster_greedy = cluster_fast_greedy(net_g_dist)
+modularity = modularity(cluster_greedy)
+n_modules = length(cluster_greedy)
+l = layout.fruchterman.reingold(net_g_dist)
+community_colors = rainbow(n_modules)
+plot(net_g_dist, layout = l, vertex.size = 5,
+vertex.color = community_colors[membership(cluster_greedy)],
+vertex.label = NA, edge.color = "gray", main = paste0('pH ', i))
+# Add text for modularity and number of clusters at the middle bottom
+mtext(side = 1, line = 2, paste("Modularity:", round(modularity, 2)), col = "black")
+mtext(side = 1, line = 1, paste("Number of Clusters:", n_modules), col = "black")
+plot = recordPlot()
+modularity_plots[[i]] = plot
+}
+##Metrics with one number per sample, distribution, modularity
+load('Data/Shared_data/Basic_metrics.RData')
+library(igraph)
+library(ggplot2)
+library(gridExtra)
+#############Test different modularity methods #####################
+# Define the cluster methods you want to use
+cluster_methods <- c("louvain", "infomap", "walktrap", "betweenness", "propagation",
+"fastgreedy", "leading.eigenvector", "spinglass", "optimal", "leiden")
+# Create an empty list to store the plots and clustering results
+modularity_plots <- list()
+clustering_results <- list()
+# Iterate over each cluster method
+for (method in cluster_methods) {
+cat("Running clustering method:", method, "\n")
+modularity_c <- c()
+n_modules_c <- c()
+clustering_result <- list()
+for (i in c(4, 45, 5, 55, 6, 65, 7)) {
+cat("  Running clustering for i =", i, "\n")
+net_g_var <- paste0("net_g", i, "_dist")
+net_g <- data_list[[net_g_var]]
+cluster_result <- switch(method,
+louvain = cluster_louvain(net_g),
+infomap = cluster_infomap(net_g),
+walktrap = cluster_walktrap(net_g),
+betweenness = cluster_edge_betweenness(net_g),
+propagation = cluster_label_prop(net_g),
+fastgreedy = cluster_fast_greedy(net_g),
+leading.eigenvector = cluster_leading_eigen(net_g),
+spinglass = cluster_spinglass(net_g),
+optimal = cluster_optimal(net_g),
+leiden = cluster_leiden(net_g))
+modularity <- modularity(cluster_result)
+n_modules <- length(cluster_result)
+modularity_c[as.character(i)] <- modularity
+n_modules_c[as.character(i)] <- n_modules
+# Store clustering result in a list
+clustering_result[[as.character(i)]] <- cluster_result
+}
+modularity_test <- data.frame(modularity_c, n_modules_c)
+modularity_test$sample <- rownames(modularity_test)
+plot_mod <- ggplot(modularity_test, aes(x = sample)) +
+geom_bar(aes(y = modularity_c), stat = "identity") +
+labs(title = paste("Modularity -", method)) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
+plot_n <- ggplot(modularity_test, aes(x = sample)) +
+geom_bar(aes(y = n_modules_c), stat = "identity") +
+labs(title = paste("Number of Modules -", method)) +
+scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
+combined_plot <- grid.arrange(plot_mod, plot_n, nrow = 1)
+# Save the plot and clustering results to the respective lists
+modularity_plots[[method]] <- combined_plot
+clustering_results[[method]] <- clustering_result
+}
+View(modularity_plots)
