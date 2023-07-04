@@ -17,7 +17,7 @@ for (i in pH_indices) {
   # Get the graph and clustering results
   net_g_var <- paste0("net_g", i, "_dist")
   net_g <- data_list[[net_g_var]]
-  cluster <- clustering_results[['infomap']][[as.character(i)]]
+  cluster <- clustering_results[['louvain']][[as.character(i)]]
   
   # Get module membership vector
   module_membership <- membership(cluster)
@@ -61,7 +61,7 @@ participation_coefficients_all = list()
 for (i in pH_indices) {
   net_g_var <- paste0("net_g", i, "_dist")
   net_g <- data_list[[net_g_var]]
-  cluster <- clustering_results[['infomap']][[as.character(i)]]
+  cluster <- clustering_results[['louvain']][[as.character(i)]]
   
   # Get module membership vector
   module_membership <- membership(cluster)
@@ -155,7 +155,9 @@ for (pH_group in pH_indices) {
                                   "Network Hub" = "purple",
                                   "Unknown" = "gray")) +
     theme_classic() +
-    ggtitle(paste("pH Group", pH_group))
+    ggtitle(paste("pH Group", pH_group)) +
+    scale_x_continuous(limits = c(-0.0000001, 0.9)) +
+    scale_y_continuous(limits = c(-3, 5))
   
   # Store the scatter plot in the list
   scatter_plots[[as.character(pH_group)]] <- plot

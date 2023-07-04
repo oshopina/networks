@@ -107,7 +107,7 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   net_g_var <- paste0("net_g", i, "_dist")
   net_g <- data_list[[net_g_var]]
   
-  cluster = clustering_results[['infomap']][[as.character(i)]]
+  cluster = clustering_results[['louvain']][[as.character(i)]]
   modularity = modularity(cluster)
   n_modules = length(cluster)
   l = layout.fruchterman.reingold(net_g)
