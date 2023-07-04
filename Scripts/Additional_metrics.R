@@ -47,6 +47,7 @@ rm(i)
 path_all <- c()
 diameter_all <- c()
 density_all <- c()
+clustering_all = c()
 
 for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   net_g_var <- paste0("net_g", i, "_dist")
@@ -63,15 +64,19 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   # Calculate density
   density <- graph.density(net_g)
   density_all[as.character(i)] <- density
+  
+  # Calculate clustering coefficient
+  clustering = transitivity(net_g, "global")
+  clustering_all[as.character(i)] = clustering 
 }
 
-one_per_sample <- data.frame(path_all, diameter_all, density_all, rownames = names(path_all))
+one_per_sample <- data.frame(path_all, diameter_all, density_all, clustering_all,
+                             rownames = names(path_all))
 
-rm(density, density_all, diameter, diameter_all, i, net_g_var, path, path_all, net_g)
+rm(density, density_all, diameter, diameter_all, i, net_g_var, path, path_all, net_g, 
+   clustering_all, clustering)
 
 ## Plot metrics
-par(mfrow = c(3, 1))
-par(mar = c(2, 2, 1, 1))
 
 # Create plots for each metric
 path_plot <- ggplot(one_per_sample, aes(x = rownames)) +
@@ -89,7 +94,13 @@ density_plot <- ggplot(one_per_sample, aes(x = rownames)) +
   labs(title = paste("Density")) +
   scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
 
-# Arrange plots in a grid
-one_per_sample_plot = grid.arrange(path_plot, diameter_plot, density_plot, nrow = 3)
+clustering_plot = ggplot(one_per_sample, aes(x = rownames)) +
+  geom_bar(aes(y = clustering_all), stat = "identity") +
+  labs(title = paste("Clustering coefficient")) +
+  scale_x_discrete(labels = c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4'))
 
-rm(density_plot, diameter_plot, path_plot)
+# Arrange plots in a grid
+one_per_sample_plot = grid.arrange(path_plot, diameter_plot, density_plot, clustering_plot,
+                                   nrow = 4)
+
+rm(density_plot, diameter_plot, path_plot, clustering_plot)
