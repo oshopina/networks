@@ -44,7 +44,7 @@ for (i in colnames(page_rank[, 2:8])) {
 }
 
 rm(page_rank, page_rank_threshold, imp)
-#writexl::write_xlsx(page_rank_nodes, 'Data/page_rank_nodes.xlsx')
+#writexl::write_xlsx(page_rank_nodes, 'Data/Results/page_rank_nodes.xlsx')
 
 ###################### Combination of centrality measures ####################################
 
@@ -66,21 +66,24 @@ for (i in c(4, 45, 5, 55, 6, 65, 7)) {
   # Define the thresholds for each network measure
   degree_threshold <- mean(network_measures$Degree, na.rm = TRUE) +
     sd(network_measures$Degree, na.rm = TRUE)
-  betweenness_threshold <-
-    mean(network_measures$Betweenness, na.rm = TRUE) +
-    sd(network_measures$Betweenness, na.rm = TRUE)
   closeness_threshold <-
     mean(network_measures$Closeness, na.rm = TRUE) +
     sd(network_measures$Closeness, na.rm = TRUE)
   
   # Identify keystone OTUs based on high network measures
   keystone_otus <- network_measures[network_measures$Degree >= degree_threshold &
-                                      network_measures$Betweenness >= betweenness_threshold &
                                       network_measures$Closeness >= closeness_threshold, ] %>%
     na.omit()
+  
+  ##Identify betweeness threshold only for keystone_otus
+  betweenness_threshold <-
+    mean(keystone_otus$Betweenness, na.rm = TRUE) 
+  
+  ##Take only otus with low betweeness
+  keystone_otus = keystone_otus[keystone_otus$Betweenness <= betweenness_threshold,]
   
   all_keystone_otu[[as.character(i)]] <- keystone_otus
 }
 rm(betweenness_threshold, betweenness_var, closeness_threshold, closeness_var, degree_var, degree_threshold,
    i, keystone_otus)
-writexl::write_xlsx(all_keystone_otu, 'Data/keystone_nodes.xlsx')
+#writexl::write_xlsx(all_keystone_otu, 'Data/Results/keystone_nodes.xlsx')
