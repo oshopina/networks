@@ -1,3 +1,4 @@
+library(dplyr)
 
 ######################### Combine tables ######################################
 otu_table_16s_RA = read.csv2(
@@ -60,6 +61,11 @@ RA = RA[rownames(RA) %in% keystones$OTU,]
 ABS = ABS[rownames(ABS) %in% keystones$OTU,]
 otu_tables = list(RA = RA, ABS = ABS)
 
+Imp_pH = merge(RA, keystones, by.x = 0, by.y = 'OTU')
+rownames(Imp_pH) = Imp_pH$Row.names
+Imp_pH = c(Imp_pH$Important_pH)
+
+
 ########################## Correlation coefficients ############################
 
 cor_results_all = list()
@@ -68,7 +74,7 @@ for (j in names(otu_tables)) {
   df <- as.data.frame(t(otu_tables[[j]]))
   
   cor_results <- list()
-  for (i in rownames(RA)) {
+  for (i in keystones$OTU) {
     cor <- cor.test(as.numeric(df[[i]]), env_data$pH, method = 'pearson')
     cor_results[[i]] <- cor
   }
@@ -87,7 +93,7 @@ colnames(df)[colnames(df) == "env_data$pH"] <- "pH"
 cor_results = cor_results_all[[j]]
 otu_plots <- list()
 
-for (i in rownames(RA)) {
+for (i in keystones$OTU) {
   p = cor_results[[i]][['p.value']]
   r = cor_results[[i]][['estimate']]
   rounded_p_value <- round(p, 4)
@@ -105,15 +111,25 @@ for (i in rownames(RA)) {
     color = "blue"
   }
   
+  # Get the corresponding pH value for the current OTU from Imp_pH vector
+  index_i <- which(keystones$OTU == i)
+  pH_imp = Imp_pH[index_i]
+  
   plot <- ggplot(df, aes(x = pH, y = .data[[i]])) +
     geom_point() +
     geom_smooth(method = "loess", color = color) +
     annotate("text", x = 4, y = max(df[[i]], na.rm = T),
              label = paste0("p-value = ", rounded_p_value, "; r = ", round(r, 2)),
-             hjust = -0.1, vjust = 1, color = "black", size = 4)
+             hjust = -0.1, vjust = 1, color = "black", size = 4) +
+    ggtitle(paste0('Important in ', pH_imp))
   
   otu_plots[[i]] <- plot
 }
 otu_plots_all[[j]] = otu_plots
 }
 
+# pdf("Figures/keystones_pH_plots_RA.pdf")
+# for (plot in otu_plots_all$RA) {
+#   print(plot)
+# }
+# dev.off()
