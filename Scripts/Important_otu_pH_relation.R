@@ -1,4 +1,5 @@
 library(dplyr)
+library(ggplot2)
 
 ######################### Combine tables ######################################
 otu_table_16s_RA = read.csv2(
@@ -81,8 +82,25 @@ for (j in names(otu_tables)) {
   cor_results_all[[j]] <- cor_results
 }
 
+############################ Model #############################################
+
+anova_results_all = list()
+
+for (j in names(otu_tables)) {
+  df <- as.data.frame(t(otu_tables[[j]]))
+  
+  anova_results <- list()
+  for (i in keystones$OTU) {
+    anova <- anova(lm(as.numeric(df[[i]]) ~ poly(env_data$pH, 3, raw = T)))
+    anova_results[[i]] <- anova
+  }
+  anova_results_all[[j]] <- anova_results
+}
+
+ggplot(df, aes(pH, B.Otu112) ) +
+  geom_point() +
+  stat_smooth(method = lm, formula = y ~ poly(x, 3, raw = TRUE))
 ############################ Make graphs #######################################
-library(ggplot2)
 
 otu_plots_all = list()
 
@@ -91,10 +109,11 @@ df <- as.data.frame(t(otu_tables[[j]]))
 df$pH <- env_data$pH
 colnames(df)[colnames(df) == "env_data$pH"] <- "pH"
 cor_results = cor_results_all[[j]]
+anova_results = anova_results_all[[j]]
 otu_plots <- list()
 
 for (i in keystones$OTU) {
-  p = cor_results[[i]][['p.value']]
+  p = anova_results[[i]][['Pr(>F)']][1]
   r = cor_results[[i]][['estimate']]
   rounded_p_value <- round(p, 4)
   if (rounded_p_value < 0.001) {
@@ -117,7 +136,7 @@ for (i in keystones$OTU) {
   
   plot <- ggplot(df, aes(x = pH, y = .data[[i]])) +
     geom_point() +
-    geom_smooth(method = "loess", color = color) +
+    stat_smooth(method = lm, formula = y ~ poly(x, 3, raw = TRUE), color = color) +
     annotate("text", x = 4, y = max(df[[i]], na.rm = T),
              label = paste0("p-value = ", rounded_p_value, "; r = ", round(r, 2)),
              hjust = -0.1, vjust = 1, color = "black", size = 4) +
