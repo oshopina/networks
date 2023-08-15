@@ -91,15 +91,12 @@ for (j in names(otu_tables)) {
   
   anova_results <- list()
   for (i in keystones$OTU) {
-    anova <- anova(lm(as.numeric(df[[i]]) ~ poly(env_data$pH, 3, raw = T)))
+    anova <- anova(lm(as.numeric(df[[i]]) ~ poly(env_data$pH, 4, raw = T)))
     anova_results[[i]] <- anova
   }
   anova_results_all[[j]] <- anova_results
 }
 
-ggplot(df, aes(pH, B.Otu112) ) +
-  geom_point() +
-  stat_smooth(method = lm, formula = y ~ poly(x, 3, raw = TRUE))
 ############################ Make graphs #######################################
 
 otu_plots_all = list()
@@ -113,7 +110,7 @@ anova_results = anova_results_all[[j]]
 otu_plots <- list()
 
 for (i in keystones$OTU) {
-  p = anova_results[[i]][['Pr(>F)']][1]
+  p = cor_results[[i]][['p.value']][1]
   r = cor_results[[i]][['estimate']]
   rounded_p_value <- round(p, 4)
   if (rounded_p_value < 0.001) {
@@ -136,7 +133,7 @@ for (i in keystones$OTU) {
   
   plot <- ggplot(df, aes(x = pH, y = .data[[i]])) +
     geom_point() +
-    stat_smooth(method = lm, formula = y ~ poly(x, 3, raw = TRUE), color = color) +
+    stat_smooth(method = lm, formula = y ~ x, color = color) +
     annotate("text", x = 4, y = max(df[[i]], na.rm = T),
              label = paste0("p-value = ", rounded_p_value, "; r = ", round(r, 2)),
              hjust = -0.1, vjust = 1, color = "black", size = 4) +
@@ -147,8 +144,8 @@ for (i in keystones$OTU) {
 otu_plots_all[[j]] = otu_plots
 }
 
-# pdf("Figures/keystones_pH_plots_RA.pdf")
-# for (plot in otu_plots_all$RA) {
-#   print(plot)
-# }
-# dev.off()
+pdf("Figures/keystones_pH_plots_RA_order_4.pdf")
+for (plot in otu_plots_all$RA) {
+  print(plot)
+}
+dev.off()
