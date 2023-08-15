@@ -198,4 +198,29 @@ rm(module_hub_indices, module_hubs, network_hub_indices, network_hubs, pH_group)
 # 
 # # Close the PDF device
 # dev.off()
+pie_charts = list()
+custom_titles <- c('3.9', '4.2', '4.8', '5.4', '6.5', '6.9', '7.4')
+
+for (i in seq_along(pH_indices)) {
+  pH_group <- pH_indices[i]
+  df <- percentage_all[[as.character(pH_group)]]
+  df = as.data.frame(df)
+  
+  plot <- ggplot(data = df, aes(x = "", y = Freq, fill = classification)) +
+    geom_bar(stat = "identity", width = 1) +
+    coord_polar(theta = "y") +
+    theme_void() +
+    scale_fill_manual(values = c('Connector' = 'green', 'Module Hub' = 'red', 'Peripheral' = 'blue', 'Network Hub' = 'purple')) +
+    ggtitle(paste('Mean pH ', custom_titles[i]))  # Use the custom title for this pH group
+  
+  pie_charts[[as.character(pH_group)]] <- plot
+}
+
+# Combine pie charts into a grid with 3 columns and 3 rows
+grid_charts <- grid.arrange(
+  grobs = pie_charts,
+  ncol = 3,  # 3 columns
+  nrow = 3   # 3 rows
+)
+
 
