@@ -145,7 +145,6 @@ names = c(3.7, rep("", 18), 4, rep("", 19), 4.5, rep("", 15), 5, rep("", 15), 5.
 names_equal_distanae = c(3.7, rep("", 6), 4, rep("", 15), 4.5, rep("", 15), 5, rep("", 16), 5.5, rep("", 16),
                          6, rep("", 14), 6.5, rep("", 15), 7, rep("", 15), 7.5, rep("", 14), 8)
 library(ggplotify)
-library(ComplexHeatmap)
 
 gradient <- as.ggplot(pheatmap(
   as.matrix(t(otu_pH)),

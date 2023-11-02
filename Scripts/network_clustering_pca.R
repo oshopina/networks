@@ -84,6 +84,13 @@ small_plot_no_labels = ggplot(data = pca_table, aes(
   xlim(c(-2.5, 2.5)) +
   ylim(c(-2.5, 2.5))
 
+dist_table = dist(vegan::decostand(pca_table, method = 'hellinger'),
+                  method = 'euc')
+
+cut(hclust(dist_table), k = 3)
+
+heatmap(as.matrix(pca_table))
+
 # pdf("Figures/pca_network_clusters.pdf", width = 10, height = 6)
 # print(full_plot)
 # print(full_plot_no_labels)
