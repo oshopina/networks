@@ -175,4 +175,3 @@ line_graph = all_16S_graph + scale_y_continuous(limits = c(0.2, 0.8)) + more_1_1
 #        height = 10)
 
 
-############################# Heatmap ########################################
