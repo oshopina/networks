@@ -1,4 +1,6 @@
 library(dplyr)
+library(igraph)
+library(ggplot2)
 
 all_networks = readRDS('Data/Shared_data/full_networks_igraph.rds')
 
@@ -25,13 +27,13 @@ a <-  (10000 - 0) / (70 - 50)
 b <- 0 - a * 50
 
 final_plot = ggplot() +
-  geom_bar(data = summary_data, aes(x = as.factor(network), y = count, fill = Association), stat = "identity", position = "stack") +
-  geom_line(data = positive, aes(x = network, y = a * Positive_Percentage + b), size = 1.2, color = '#951c2a') +
+  geom_bar(data = summary_data, aes(x = as.factor(network), y = count, fill = Association), stat = "identity", position = "stack", color = 'black') +
+  geom_line(data = positive, aes(x = network, y = a * Positive_Percentage + b), linewidth = 1.2, color = '#951c2a') +
   scale_fill_manual(values = c("Positive" = "#eb66c1", "Negative" = "#5caeda")) +
   scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~ (. - b) / a, name = "Positive Interactions (%)")) +
   labs(x = "pH", y = 'No. interactions') +
   theme_classic() +
   scale_x_discrete(labels = c('3.7~4.5', '4.5~6.1', '6.1~8.0'))
 
-ggsave('Figures/interactions.png', final_plot, device = 'png')
+#ggsave('Figures/interactions.png', final_plot, device = 'png')
 
