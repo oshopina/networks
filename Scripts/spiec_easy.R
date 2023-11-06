@@ -172,9 +172,9 @@ final_plot = p1 + ggtitle('pH 3.7~4.5') + theme(plot.title = element_text(face =
   p3 + ggtitle('pH 6.1~8.0') + theme(plot.title = element_text(face = "bold", size = 20)) +
   legend + plot_layout(design = layout)
 
-ggsave('Figures/NETWORK.png', 
-       final_plot, 
-       device = 'png', 
-       width = 21,
-       height = 10)
+# ggsave('Figures/NETWORK.png', 
+#        final_plot, 
+#        device = 'png', 
+#        width = 21,
+#        height = 10)
 

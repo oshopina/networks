@@ -169,11 +169,11 @@ legend = l1 + theme(panel.spacing = unit(0, "lines")) + l2 + plot_layout(design 
  
 final_plot = p1 + ggtitle('pH 3.7~4.5') + theme(plot.title = element_text(face = "bold", size = 20)) + 
    p2 + ggtitle('pH 4.5~6.1') + theme(plot.title = element_text(face = "bold", size = 20)) + 
-   p3 + ggtitle('pH >6.1') + theme(plot.title = element_text(face = "bold", size = 20)) +
+   p3 + ggtitle('pH 6.1~8.0') + theme(plot.title = element_text(face = "bold", size = 20)) +
    legend + plot_layout(design = layout)
 
-ggsave('Figures/NETWORK_05.png', 
-       final_plot, 
-       device = 'png', 
-       width = 21,
-       height = 10)
+# ggsave('Figures/NETWORK_05.png', 
+#        final_plot, 
+#        device = 'png', 
+#        width = 21,
+#        height = 10)
