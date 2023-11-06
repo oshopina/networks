@@ -101,7 +101,7 @@ library(ggplotify)
 l = layout_with_mds(nets_dist[[1]])
   
  plot(nets[[1]], edge.color = E(nets[[1]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[1]])$colors, vertex.label = "", rescale=F, layout=l*0.02)
+     vertex.color = V(nets[[1]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
  
  grid.echo()
  p1 <- grid.grab()
@@ -110,7 +110,7 @@ l = layout_with_mds(nets_dist[[1]])
 l = layout_with_mds(nets_dist[[2]])
 
  plot(nets[[2]], edge.color = E(nets[[2]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[2]])$colors, vertex.label = "", rescale=F, layout=l*0.02)
+     vertex.color = V(nets[[2]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
  
  grid.echo()
  p2 <- grid.grab()
@@ -119,7 +119,7 @@ l = layout_with_mds(nets_dist[[2]])
 l = layout_with_mds(nets_dist[[3]])
 
  plot(nets[[3]], edge.color = E(nets[[3]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[3]])$colors, vertex.label = "", rescale=F, layout=l*0.02)
+     vertex.color = V(nets[[3]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
 
  grid.echo()
  p3 <- grid.grab()
