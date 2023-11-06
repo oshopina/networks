@@ -37,10 +37,10 @@ for (i in 1:length(groups)) {
   env_group <- env[env$X16S_clustering == group$x16s & env$ITS_clustering == group$its,]
   
   bacteria_group <- bacteria[, colnames(bacteria) %in% env_group$Sample]
-  bacteria_group <- bacteria_group[which(apply(bacteria_group, 1, max) > 5),] |> t()
+  bacteria_group <- bacteria_group[which(apply(bacteria_group, 1, max) > 22.5),] |> t()
   
   fungi_group <- fungi[, colnames(fungi) %in% env_group$Sample]
-  fungi_group <- fungi_group[which(apply(fungi_group, 1, max) > 5),] |> t()
+  fungi_group <- fungi_group[which(apply(fungi_group, 1, max) > 35.75),] |> t()
   
   bacteria_group_tables[[i]] = bacteria_group
   fungi_group_tables[[i]] = fungi_group
@@ -97,11 +97,13 @@ for (i in 1:length(groups)) {
 library(grid)
 library(gridGraphics)
 library(ggplotify)
-
+library(patchwork)
+library(ggplot2)
+ 
 l = layout_with_mds(nets_dist[[1]])
   
  plot(nets[[1]], edge.color = E(nets[[1]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[1]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
+     vertex.color = V(nets[[1]])$colors, vertex.label = "", rescale=F, layout=l*0.02)
  
  grid.echo()
  p1 <- grid.grab()
@@ -110,7 +112,7 @@ l = layout_with_mds(nets_dist[[1]])
 l = layout_with_mds(nets_dist[[2]])
 
  plot(nets[[2]], edge.color = E(nets[[2]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[2]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
+     vertex.color = V(nets[[2]])$colors, vertex.label = "", rescale=F, layout=l*0.02)
  
  grid.echo()
  p2 <- grid.grab()
@@ -119,19 +121,59 @@ l = layout_with_mds(nets_dist[[2]])
 l = layout_with_mds(nets_dist[[3]])
 
  plot(nets[[3]], edge.color = E(nets[[3]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[3]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
+     vertex.color = V(nets[[3]])$colors, vertex.label = "", rescale=F, layout=l*0.02)
 
  grid.echo()
  p3 <- grid.grab()
  p3 = ggplotify::as.ggplot(p3)
 
+########################## Fake legend ########################################
 
-Legend(x="bottom", c("Bacteria","Fungi"), pch=21,
-       pt.bg = c("black", "white"), pt.cex = 1.5)
+ data <- data.frame(
+   Year = 2000:2010,
+   Value_A = cumsum(runif(11)),
+   Value_B = cumsum(runif(11))
+ )
 
-legend("bottom", legend = c("Positive", "Negative"), col = c("#FF37D5", "#4335C9"), lwd = 2)
+dummy_plot = ggplot(data, aes(x = Year)) +
+  geom_line(aes(y = Value_A, color = 'Positive')) +
+  geom_line(aes(y = Value_B, color = 'Negative')) + 
+  scale_color_manual(values = c("#FF37D5", "#4335C9"), name = 'Association') +
+  theme_bw()
+ 
+ l1 = cowplot::get_legend(dummy_plot)
+ l1 = as.ggplot(l1)
+ 
+ dummy_plot2 <- ggplot(data, aes(x = Year)) +
+   geom_point(aes(y = Value_A, fill = 'Bacteria'), shape = 21, size = 3) +
+   geom_point(aes(y = Value_B, fill = 'Fungi'), shape = 21, size = 3) +
+   scale_fill_manual(values = c('Bacteria' = 'black', 'Fungi' = 'white'), name = 'Guild') +
+   theme_bw()
+ 
+ l2 = cowplot::get_legend(dummy_plot2)
+ l2 = as.ggplot(l2)
+ 
+############################### Final plot ####################################
 
-library(patchwork)
-library(ggplot2)
+layout = c(
+  area(t = 1, b = 10, l = 1, r = 10),
+  area(t = 1, b = 10, l = 10, r = 20),
+  area(t = 1, b = 10, l = 20, r = 30),
+  area(t = 7, b = 9, l = 29, r = 30)
+)
 
-p1 + ggtitle('pH 3.7~4.5') + p2 + ggtitle('pH 4.5~6.1') + p3 + ggtitle('pH >6.1') 
+l = c(area(t = 1, b = 15, l = 1, r = 5),
+       area(t = 10, b = 15, l = 1, r = 5))
+ 
+legend = l1 + theme(panel.spacing = unit(0, "lines")) + l2 + plot_layout(design = l) 
+ 
+final_plot = p1 + ggtitle('pH 3.7~4.5') + theme(plot.title = element_text(face = "bold", size = 20)) + 
+   p2 + ggtitle('pH 4.5~6.1') + theme(plot.title = element_text(face = "bold", size = 20)) + 
+   p3 + ggtitle('pH >6.1') + theme(plot.title = element_text(face = "bold", size = 20)) +
+   legend + plot_layout(design = layout)
+
+ggsave('Figures/NETWORK_05.png', 
+       final_plot, 
+       device = 'png', 
+       width = 21,
+       height = 10)
