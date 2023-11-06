@@ -67,7 +67,7 @@ for (i in 1:length(groups)) {
   bacteria_group = bacteria_group_tables[[i]]
   fungi_group = fungi_group_tables[[i]]
   
-  spiec = readRDS(paste0('Data/SpiecEasi_3_groups/network_', group$name, '_05.rds'))
+  spiec = readRDS(paste0('Data/SpiecEasi_3_groups/network_', group$name, '.rds'))
   matrix = symBeta(getOptBeta(spiec), mode='maxabs') |> as.matrix()
   colnames(matrix) = c(colnames(bacteria_group), colnames(fungi_group))
   rownames(matrix) = c(colnames(bacteria_group), colnames(fungi_group))
@@ -97,41 +97,84 @@ for (i in 1:length(groups)) {
 library(grid)
 library(gridGraphics)
 library(ggplotify)
-
-l = layout_with_mds(nets_dist[[1]])
-  
- plot(nets[[1]], edge.color = E(nets[[1]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[1]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
- 
- grid.echo()
- p1 <- grid.grab()
- p1 = ggplotify::as.ggplot(p1)
-
-l = layout_with_mds(nets_dist[[2]])
-
- plot(nets[[2]], edge.color = E(nets[[2]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[2]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
- 
- grid.echo()
- p2 <- grid.grab()
- p2 = ggplotify::as.ggplot(p2)
-
-l = layout_with_mds(nets_dist[[3]])
-
- plot(nets[[3]], edge.color = E(nets[[3]])$colors, vertex.size = 2.5, edge.curved = 1,
-     vertex.color = V(nets[[3]])$colors, vertex.label = "", rescale=F, layout=l*0.5)
-
- grid.echo()
- p3 <- grid.grab()
- p3 = ggplotify::as.ggplot(p3)
-
-
-Legend(x="bottom", c("Bacteria","Fungi"), pch=21,
-       pt.bg = c("black", "white"), pt.cex = 1.5)
-
-legend("bottom", legend = c("Positive", "Negative"), col = c("#FF37D5", "#4335C9"), lwd = 2)
-
 library(patchwork)
 library(ggplot2)
 
-p1 + ggtitle('pH 3.7~4.5') + p2 + ggtitle('pH 4.5~6.1') + p3 + ggtitle('pH >6.1') 
+l = layout_with_mds(nets_dist[[1]])
+
+plot(nets[[1]], edge.color = E(nets[[1]])$colors, vertex.size = 2.5, edge.curved = 1,
+     vertex.color = V(nets[[1]])$colors, vertex.label = "", rescale=F, layout=l*0.55)
+
+grid.echo()
+p1 <- grid.grab()
+p1 = ggplotify::as.ggplot(p1)
+
+l = layout_with_mds(nets_dist[[2]])
+
+plot(nets[[2]], edge.color = E(nets[[2]])$colors, vertex.size = 2.5, edge.curved = 1,
+     vertex.color = V(nets[[2]])$colors, vertex.label = "", rescale=F, layout=l*0.55)
+
+grid.echo()
+p2 <- grid.grab()
+p2 = ggplotify::as.ggplot(p2)
+
+l = layout_with_mds(nets_dist[[3]])
+
+plot(nets[[3]], edge.color = E(nets[[3]])$colors, vertex.size = 2.5, edge.curved = 1,
+     vertex.color = V(nets[[3]])$colors, vertex.label = "", rescale=F, layout=l*0.55)
+
+grid.echo()
+p3 <- grid.grab()
+p3 = ggplotify::as.ggplot(p3)
+
+########################## Fake legend ########################################
+
+data <- data.frame(
+  Year = 2000:2010,
+  Value_A = cumsum(runif(11)),
+  Value_B = cumsum(runif(11))
+)
+
+dummy_plot = ggplot(data, aes(x = Year)) +
+  geom_line(aes(y = Value_A, color = 'Positive')) +
+  geom_line(aes(y = Value_B, color = 'Negative')) + 
+  scale_color_manual(values = c("#FF37D5", "#4335C9"), name = 'Association') +
+  theme_bw()
+
+l1 = cowplot::get_legend(dummy_plot)
+l1 = as.ggplot(l1)
+
+dummy_plot2 <- ggplot(data, aes(x = Year)) +
+  geom_point(aes(y = Value_A, fill = 'Bacteria'), shape = 21, size = 3) +
+  geom_point(aes(y = Value_B, fill = 'Fungi'), shape = 21, size = 3) +
+  scale_fill_manual(values = c('Bacteria' = 'black', 'Fungi' = 'white'), name = 'Guild') +
+  theme_bw()
+
+l2 = cowplot::get_legend(dummy_plot2)
+l2 = as.ggplot(l2)
+
+############################### Final plot ####################################
+
+layout = c(
+  area(t = 1, b = 10, l = 1, r = 10),
+  area(t = 1, b = 10, l = 12, r = 22),
+  area(t = 1, b = 10, l = 20, r = 30),
+  area(t = 7, b = 9, l = 29, r = 30)
+)
+
+l = c(area(t = 1, b = 15, l = 1, r = 5),
+      area(t = 10, b = 15, l = 1, r = 5))
+
+legend = l1 + theme(panel.spacing = unit(0, "lines")) + l2 + plot_layout(design = l) 
+
+final_plot = p1 + ggtitle('pH 3.7~4.5') + theme(plot.title = element_text(face = "bold", size = 20)) + 
+  p2 + ggtitle('pH 4.5~6.1') + theme(plot.title = element_text(face = "bold", size = 20)) + 
+  p3 + ggtitle('pH 6.1~8.0') + theme(plot.title = element_text(face = "bold", size = 20)) +
+  legend + plot_layout(design = layout)
+
+ggsave('Figures/NETWORK.png', 
+       final_plot, 
+       device = 'png', 
+       width = 21,
+       height = 10)
+
