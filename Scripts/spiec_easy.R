@@ -178,3 +178,4 @@ final_plot = p1 + ggtitle('pH 3.7~4.5') + theme(plot.title = element_text(face =
 #        width = 21,
 #        height = 10)
 
+saveRDS(list(nets, nets_dist, nets_abs), 'Data/full_networks_igraph.rds')
