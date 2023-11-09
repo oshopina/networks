@@ -35,6 +35,29 @@ final_plot = ggplot() +
   theme_classic() +
   scale_x_discrete(labels = c('3.7~4.5', '4.5~6.1', '6.1~8.0'))
 
-# saveRDS(final_plot, 'Data/Shared_data/interactions.rds')
 # ggsave('Figures/interactions.png', final_plot, device = 'png')
 
+############################### 3 in 1 graph ###################################
+
+plot1 = readRDS('Data/Shared_data/3_plots_05.rds')
+plot234 = readRDS('Data/Shared_data/basic_metrics_plots.rds')
+
+plot2 = plot234[[1]] + ylab('Degree') + plot234[[2]] + ylab('Betweenness') +
+  plot234[[3]] + ylab('Closeness') + plot234[[4]] + ylab('PageRank Walker')
+
+library(patchwork)
+
+l = c(
+  area(t = 1, b = 10, l = 1, r = 10),
+  area(t = 1, b = 10, l = 10, r = 20),
+  area(t = 1, b = 10, l = 20, r = 30),
+  area(t = 7, b = 10, l = 27, r = 30),
+  area(t = 11, b = 20, l = 1, r = 20),
+  area(t = 11, b = 20, l = 22, r = 29)
+)
+
+three_in_one = plot1 + plot2 + final_plot + plot_layout(design = l)
+
+# ggsave('Figures/three_in_one.png', three_in_one, 
+#        width = 15,
+#        height = 13)

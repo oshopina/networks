@@ -7,77 +7,84 @@ library(centiserve)
 library(dplyr)
 library(ggplot2)
 
-all_networks = readRDS('Data/Shared_data/full_networks_igraph.rds')
+#################### otu metrics calculation ##################################
 
-## Calculate centrality metrics for each network
-otu_metrics <- list()
+# all_networks = readRDS('Data/Shared_data/full_networks_igraph.rds')
+# 
+# ## Calculate centrality metrics for each network
+# otu_metrics <- list()
+# 
+# ## Loop through the files
+# for (i in 1:3) {
+#   
+#   # Get the network objects using the constructed variable names
+#   net_g <- all_networks[["net"]][[i]]
+#   net_g_dist <- all_networks[["dist"]][[i]]
+#   net_g_abs <- all_networks[["abs"]][[i]]
+#   
+#   # Calculate the centrality metrics
+#   result <- data.frame(
+#     degree = degree(net_g),
+#     alpha_centrality = alpha.centrality(net_g),
+#     strength = strength(net_g),
+#     betweenness = betweenness(net_g_dist, v = V(net_g_dist)),
+#     closeness = closeness(net_g_dist),
+#     transitivity = transitivity(net_g, type = 'localundirected'),
+#     eigen_centrality = eigen_centrality(net_g_dist)$vector,
+#     page_rank = page.rank(net_g_dist)$vector,
+#     bottleneck = bottleneck(net_g_dist, v = V(net_g_dist)),
+#     authority_score = authority_score(net_g)$vector,
+#     hub_score = hub_score(net_g)$vector,
+#     centralization = centralization.degree(net_g)$res
+#   )
+#   
+#   # Save the resulting list for the file
+#   otu_metrics[[i]] <- result
+# }
+# rm(net_g, net_g_dist, net_g_abs, result, i)
+# 
+# ## Merge tables by metric
+# tables_by_metric <- list()
 
-## Loop through the files
-for (i in 1:3) {
-  
-  # Get the network objects using the constructed variable names
-  net_g <- all_networks[["net"]][[i]]
-  net_g_dist <- all_networks[["dist"]][[i]]
-  net_g_abs <- all_networks[["abs"]][[i]]
-  
-  # Calculate the centrality metrics
-  result <- data.frame(
-    degree = degree(net_g),
-    alpha_centrality = alpha.centrality(net_g),
-    strength = strength(net_g),
-    betweenness = betweenness(net_g_dist, v = V(net_g_dist)),
-    closeness = closeness(net_g_dist),
-    transitivity = transitivity(net_g, type = 'localundirected'),
-    eigen_centrality = eigen_centrality(net_g_dist)$vector,
-    page_rank = page.rank(net_g_dist)$vector,
-    bottleneck = bottleneck(net_g_dist, v = V(net_g_dist)),
-    authority_score = authority_score(net_g)$vector,
-    hub_score = hub_score(net_g)$vector,
-    centralization = centralization.degree(net_g)$res
-  )
-  
-  # Save the resulting list for the file
-  otu_metrics[[i]] <- result
-}
-rm(net_g, net_g_dist, net_g_abs, result, i)
-
-## Merge tables by metric
-tables_by_metric <- list()
 
 # Iterate over the column names of the '4' table in otu_metrics
-for (i in colnames(otu_metrics[[1]])) {
-  table_names <- c(1:3)
-  
-  # Extract the column of interest from each table
-  table_list <- lapply(table_names, function(table_num) {
-    otu_metrics[[table_num]] %>% select(matches(i))
-  })
-  
-  # Add row names as a column to each table
-  table_list <- lapply(table_list, function(table) {
-    table$row_names <- rownames(table)
-    table
-  })
-  
-  # Set the names of the new list based on the original table names
-  names(table_list) <- table_names
-  
-  # Rename the metric column in each table with the corresponding suffix
-  table_list <- lapply(names(table_list), function(table_name) {
-    suffix <- gsub("[^0-9]", "", table_name)  # Extract the numeric suffix from the table name
-    table <- table_list[[table_name]]
-    colnames(table)[colnames(table) == i] <- paste0(i, "_", table_name)
-    table
-  })
-  
-  # Merge the columns of all tables by row names with custom suffixes for duplicate columns
-  merged_table <- Reduce(function(x, y) merge(x, y, by = "row_names", all = TRUE),
-                         table_list)
-  
-  # Store the merged table in tables_by_metric
-  tables_by_metric[[i]] <- merged_table
-}
-rm(table_names, table_list, merged_table, i)
+# for (i in colnames(otu_metrics[[1]])) {
+#   table_names <- c(1:3)
+#   
+#   # Extract the column of interest from each table
+#   table_list <- lapply(table_names, function(table_num) {
+#     otu_metrics[[table_num]] %>% select(matches(i))
+#   })
+#   
+#   # Add row names as a column to each table
+#   table_list <- lapply(table_list, function(table) {
+#     table$row_names <- rownames(table)
+#     table
+#   })
+#   
+#   # Set the names of the new list based on the original table names
+#   names(table_list) <- table_names
+#   
+#   # Rename the metric column in each table with the corresponding suffix
+#   table_list <- lapply(names(table_list), function(table_name) {
+#     suffix <- gsub("[^0-9]", "", table_name)  # Extract the numeric suffix from the table name
+#     table <- table_list[[table_name]]
+#     colnames(table)[colnames(table) == i] <- paste0(i, "_", table_name)
+#     table
+#   })
+#   
+#   # Merge the columns of all tables by row names with custom suffixes for duplicate columns
+#   merged_table <- Reduce(function(x, y) merge(x, y, by = "row_names", all = TRUE),
+#                          table_list)
+#   
+#   # Store the merged table in tables_by_metric
+#   tables_by_metric[[i]] <- merged_table
+# }
+# rm(table_names, table_list, merged_table, i)
+
+
+########################## Violin plots #######################################
+tables_by_metric = readRDS('Data/Shared_data/tables_by_metric.rds')
 
 violin_plots = list()
 for (i in names(tables_by_metric)) {
@@ -99,9 +106,9 @@ for (i in names(tables_by_metric)) {
     xlab("pH") +
     ylab(i) +
     theme_classic() +
-    scale_fill_manual(values = c("#B51945", '#D13A4C', "#F89151",
-                                 "#FDCF7D", "#AEDEA1", "#68C2A3",
-                                 "#388FB8")) +
+    scale_fill_manual(values = c("#B51945",
+                                 "#FDCF7D", 
+                                 "#68C2A3")) +
     scale_x_discrete(labels = c('3.7~4.5', '4.5~6.1', '6.1~8.0')) +
     guides(fill = 'none') +
     annotate("text", x = 1, y = max(df_long$value, na.rm = T),
