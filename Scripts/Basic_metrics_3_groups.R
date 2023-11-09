@@ -7,7 +7,7 @@ library(centiserve)
 library(dplyr)
 library(ggplot2)
 
-all_networks = readRDS('Data/full_networks_igraph.rds')
+all_networks = readRDS('Data/Shared_data/full_networks_igraph.rds')
 
 ## Calculate centrality metrics for each network
 otu_metrics <- list()
@@ -118,3 +118,7 @@ rm(df_long, plot, anova_result, i, p_value, rounded_p_value)
 #   print(plot)
 # }
 # dev.off()
+
+# saveRDS(tables_by_metric, 'Data/Shared_data/tables_by_metric.rds')
+saveRDS(list(violin_plots$degree, violin_plots$betweenness, violin_plots$closeness, violin_plots$page_rank),
+        'Data/Shared_data/basic_metrics_plots.rds')

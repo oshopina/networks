@@ -172,6 +172,8 @@ final_plot = p1 + ggtitle('pH 3.7~4.5') + theme(plot.title = element_text(face =
    p3 + ggtitle('pH 6.1~8.0') + theme(plot.title = element_text(face = "bold", size = 20)) +
    legend + plot_layout(design = layout)
 
+# saveRDS(final_plot, 'Data/Shared_data/3_plots_05.rds')
+
 # ggsave('Figures/NETWORK_05.png', 
 #        final_plot, 
 #        device = 'png', 

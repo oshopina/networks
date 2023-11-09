@@ -4,6 +4,7 @@ library(ggplot2)
 ####################### 16S + all OTUs ######################################
 
 otu16S <- read.csv('Data/otu_16S_4500.RA.csv', row.names = 1)
+qPCR = read.csv('Data/N and 16s and ITS.csv', row.names = 1)
 env16S <- read.csv('Data/env_16S.csv')
 
 # Filter and remove outliers in one step
@@ -14,6 +15,9 @@ env16S <- env16S[order(env16S$pH), ]
 otu16S <- otu16S[, colnames(otu16S) %in% env16S$Sample]
 otu16S <- as.data.frame(t(otu16S))
 
+#Recalculate absolute abundances 
+
+qPCR = qPCR[rownames(otu16S),]
 ####################16S + OTUs > 1% ############################################
 
 otu16S_big <- otu16S[, apply(otu16S, 2, max) >= 45]
@@ -110,5 +114,5 @@ plot_heat = heatmap_16S +  heatmap_16S_big + gglegend +
   heatmap_ITS + heatmap_ITS_big +
   plot_layout(design = layout)
 
-ggsave('Figures/tipping_pounts_heatmap.png', plot_heat,
-       height = 10, width = 14)
+# ggsave('Figures/tipping_pounts_heatmap.png', plot_heat,
+#        height = 10, width = 14)

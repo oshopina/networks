@@ -35,5 +35,6 @@ final_plot = ggplot() +
   theme_classic() +
   scale_x_discrete(labels = c('3.7~4.5', '4.5~6.1', '6.1~8.0'))
 
-#ggsave('Figures/interactions.png', final_plot, device = 'png')
+# saveRDS(final_plot, 'Data/Shared_data/interactions.rds')
+# ggsave('Figures/interactions.png', final_plot, device = 'png')
 
