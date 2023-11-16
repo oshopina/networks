@@ -4,7 +4,6 @@ library(ggplot2)
 ####################### 16S + all OTUs ######################################
 
 otu16S <- read.csv('Data/otu_16S_4500.RA.csv', row.names = 1)
-qPCR = read.csv('Data/N and 16s and ITS.csv', row.names = 1)
 env16S <- read.csv('Data/env_16S.csv')
 
 # Filter and remove outliers in one step

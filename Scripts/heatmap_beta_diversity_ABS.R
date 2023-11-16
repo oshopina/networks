@@ -3,8 +3,7 @@ library(ggplot2)
 
 ####################### 16S + all OTUs ######################################
 
-otu16S <- read.csv('Data/otu_16S_4500.RA.csv', row.names = 1)
-qPCR = read.csv('Data/N and 16s and ITS.csv', row.names = 1)
+otu16S <- read.csv('Data/otu_16S_4500.ABS.csv', row.names = 1)
 env16S <- read.csv('Data/env_16S.csv')
 
 # Filter and remove outliers in one step
@@ -15,16 +14,11 @@ env16S <- env16S[order(env16S$pH), ]
 otu16S <- otu16S[, colnames(otu16S) %in% env16S$Sample]
 otu16S <- as.data.frame(t(otu16S))
 
-#Recalculate absolute abundances 
-
-qPCR = qPCR[rownames(otu16S),]
-####################16S + OTUs > 1% ############################################
-
-otu16S_big <- otu16S[, apply(otu16S, 2, max) >= 45]
-
 ###################ITS + all OTUs ############################################
 
-otuITS <- read.csv('Data/otu_ITS_7150.RA.csv', row.names = 1)
+otuITS <- read.csv('Data/otu_ITS_7150.ABS.csv', row.names = 1)
+otuITS[otuITS < 0] = 0
+otuITS = otuITS[, !colnames(otuITS) %in% c("H057","H046", "H047", "H041")] ## remove samples with only negative values
 envITS <- read.csv('Data/env_16S.csv')
 
 # Filter envITS and order by pH
@@ -35,8 +29,7 @@ envITS <- envITS[order(envITS$pH), ]
 otuITS <- otuITS[, colnames(otuITS) %in% envITS$Sample]
 otuITS <- as.data.frame(t(otuITS))
 
-################ ITS + 1% OTU > #############################################
-otuITS_big <- otuITS[, apply(otuITS, 2, max) >= 71.5]
+
 ############################# Beta_diversity ###################################
 
 hellinger_diversity = function(otu_table) {
@@ -46,14 +39,10 @@ hellinger_diversity = function(otu_table) {
 }
 
 beta_diversity_16S = hellinger_diversity(otu16S)
-beta_diversity_16S_big = hellinger_diversity(otu16S_big) 
 beta_diversity_ITS = hellinger_diversity(otuITS)
-beta_diversity_ITS_big = hellinger_diversity(otuITS_big)
 
 beta_diversity_16S = beta_diversity_16S[env16S$Sample, env16S$Sample]
-beta_diversity_16S_big = beta_diversity_16S_big[env16S$Sample, env16S$Sample]
 beta_diversity_ITS = beta_diversity_ITS[envITS$Sample, envITS$Sample]
-beta_diversity_ITS_big = beta_diversity_ITS_big[envITS$Sample, envITS$Sample]
 
 ############################### Heatmap #######################################
 library(ComplexHeatmap)
@@ -66,16 +55,18 @@ distance_heatmap = function(dist_matrix, env_table, names_for_pH, graph_name) {
                                  c("#9e0142", "#d53e4f", "#f46d43", "#fdae61", "#fee08a",
                                    "#e6f598", "#aadda4", "#66a2a5", "#3288ad", "#5e4fa2"))
   
-  ha = HeatmapAnnotation(pH = env_table$pH, pH_labels = anno_text(names_for_pH, rot = 0), 
+  ha = HeatmapAnnotation(empty = anno_empty(border = FALSE, height = unit(3, "mm")),
+                         pH = env_table$pH, empty2 = anno_empty(border = FALSE, height = unit(3, "mm")),
+                         pH_labels = anno_text(names_for_pH, rot = 0),
                          col = list(pH = col_fun), show_legend = F,
-                         gp = gpar(col = "black"), gap = unit(1, "mm"))
+                         gp = gpar(col = "black"))
   ha2 = rowAnnotation(pH_labels = anno_text(names_for_pH, rot = 0), pH = env_table$pH,
                       col = list(pH = col_fun), show_legend = F, 
                       show_annotation_name = F, gp = gpar(col = "black"))
   
   heatmap = Heatmap(dist_matrix, row_order = rownames(dist_matrix), column_order = colnames(dist_matrix),
-          col = my_palette(100), show_row_names = F, show_column_names = F, show_heatmap_legend = F,
-          bottom_annotation = ha, left_annotation = ha2, column_title = graph_name)
+                    col = my_palette(100), show_row_names = F, show_column_names = F, show_heatmap_legend = F,
+                    bottom_annotation = ha, left_annotation = ha2, column_title = graph_name)
   
   return(heatmap)
 }
@@ -83,14 +74,12 @@ distance_heatmap = function(dist_matrix, env_table, names_for_pH, graph_name) {
 names_16S = c(3.7, rep("", 18), 4, rep("", 19), 4.5, rep("", 15), 5, rep("", 15), 5.5, rep("", 8), 6, rep("", 12), 
           6.5, rep("", 14), 7, rep("", 17), 7.5, rep("", 8), 8.0)
 names_ITS = c(3.7, rep("", 19), 4, rep("", 21), 4.5, rep("", 15), 5, rep("", 15), 5.5, rep("", 9), 6, rep("", 12), 
-              6.5, rep("", 14), 7, rep("", 17), 7.5, rep("", 8), 8.0)
+              6.5, rep("", 14), 7, rep("", 17), 7.5, rep("", 4), 8.0)
 
 library(ggplotify)
 
 heatmap_16S = as.ggplot(distance_heatmap(beta_diversity_16S, env16S, names_16S, "Bacteria (all OTUs)"))
-heatmap_16S_big = as.ggplot(distance_heatmap(beta_diversity_16S_big, env16S, names_16S, "Bacteria (OTUs ≥1%)"))
 heatmap_ITS = as.ggplot(distance_heatmap(beta_diversity_ITS, envITS, names_ITS, "Fungi (all OTUs)"))
-heatmap_ITS_big = as.ggplot(distance_heatmap(beta_diversity_ITS_big, envITS, names_ITS, "Fungi (OTUs ≥1%)"))
 
 library(patchwork)
 
@@ -100,19 +89,18 @@ legend = Legend(col_fun = circlize::colorRamp2(c(0, 0.5, 1, 1.5), c(
 title = "Hellinger distance")
 gglegend = grid.grabExpr(draw(legend))
 
-layout <- '
-AAABBB#
-AAABBB#
-AAABBBC
-DDDEEEC
-DDDEEE#
-DDDEEE#
+layout <- layout <- '
+AAA#
+AAA#
+AAAC
+BBBC
+BBB#
+BBB#
 '
 
 
-plot_heat = heatmap_16S +  heatmap_16S_big + gglegend +
-  heatmap_ITS + heatmap_ITS_big +
+plot_heat = heatmap_16S + heatmap_ITS  + gglegend +
   plot_layout(design = layout)
 
-# ggsave('Figures/tipping_pounts_heatmap.png', plot_heat,
-#        height = 10, width = 14)
+ggsave('Figures/tipping_pounts_heatmap_ABS.svg', plot_heat,
+       device = 'svg', height = 10, width = 7)
