@@ -14,9 +14,6 @@ env16S <- env16S[order(env16S$pH), ]
 otu16S <- otu16S[, colnames(otu16S) %in% env16S$Sample]
 otu16S <- as.data.frame(t(otu16S))
 
-#Recalculate absolute abundances 
-
-qPCR = qPCR[rownames(otu16S),]
 ####################16S + OTUs > 1% ############################################
 
 otu16S_big <- otu16S[, apply(otu16S, 2, max) >= 45]
