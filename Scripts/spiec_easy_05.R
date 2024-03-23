@@ -81,8 +81,8 @@ for (i in 1:length(groups)) {
   net_abs <- net
   E(net_abs)$weight <- abs(E(net_abs)$weight)
   
-  E(net)[weight>0]$color <- "#FF37D5"
-  E(net)[weight<0]$color <- "#4335C9"
+  E(net)[weight>0]$color <- "#68C2A3"
+  E(net)[weight<0]$color <- "#B51945"
   
   V(net)$color <- ifelse(substr(V(net)$name, 1, 1) == "B", "black", "white")
   
@@ -138,7 +138,7 @@ l = layout_with_mds(nets_dist[[3]])
 dummy_plot = ggplot(data, aes(x = Year)) +
   geom_line(aes(y = Value_A, color = 'Positive')) +
   geom_line(aes(y = Value_B, color = 'Negative')) + 
-  scale_color_manual(values = c("#FF37D5", "#4335C9"), name = 'Association') +
+  scale_color_manual(values = c("#B51945", "#68C2A3"), name = 'Association') +
   theme_bw()
  
  l1 = cowplot::get_legend(dummy_plot)

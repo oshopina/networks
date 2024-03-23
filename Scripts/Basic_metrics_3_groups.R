@@ -6,6 +6,7 @@ library(igraph)
 library(centiserve)
 library(dplyr)
 library(ggplot2)
+library(multcomp)
 
 #################### otu metrics calculation ##################################
 
@@ -90,16 +91,13 @@ violin_plots = list()
 for (i in names(tables_by_metric)) {
   df_long <- tidyr::pivot_longer(tables_by_metric[[i]], 
                                  cols = -row_names, names_to = "sample", values_to = "value")
-  anova_result = anova(lm(value ~ sample, data = df_long))
-  p_value = anova_result$`Pr(>F)`[1]
-  
-  # Round the p-value and check if it's equal to 0
-  rounded_p_value <- round(p_value, 4)
-  if (rounded_p_value == 0) {
-    rounded_p_value <- "< 0.001"
-  } else {
-    rounded_p_value <- paste("= ", rounded_p_value)
-  }
+  df_long$sample = as.factor(df_long$sample)
+  anova_result = aov(value ~ sample, data = df_long)
+  tuk = glht(anova_result, linfct = mcp(sample = "Tukey"))
+  tuk_cld = cld(tuk)
+  cld_letters = tuk_cld$mcletters$Letters
+  labels_level = max(na.omit(df_long$value)) - sd(na.omit(df_long$value))
+
   # Plot the violin plot
   plot <- ggplot(df_long, aes(x = sample, y = value, fill = sample)) +
     geom_violin(trim = 0) +
@@ -110,14 +108,15 @@ for (i in names(tables_by_metric)) {
                                  "#FDCF7D", 
                                  "#68C2A3")) +
     scale_x_discrete(labels = c('3.7~4.5', '4.5~6.1', '6.1~8.0')) +
+    scale_y_continuous(limits = c(0, max(df_long$value))) +
     guides(fill = 'none') +
-    annotate("text", x = 1, y = max(df_long$value, na.rm = T),
-             label = paste("p-value", rounded_p_value, "(ANOVA)"),
-             hjust = -0.1, vjust = 1, color = "black", size = 4)
+    annotate('text', x = names(cld_letters), y = labels_level*1.35, label = cld_letters,
+               size = 6)
   
   # Add the plot to the list
   violin_plots[[i]] <- plot
-  }
+}
+
 rm(df_long, plot, anova_result, i, p_value, rounded_p_value)
     
 # pdf("Figures/violin_plots_3_groups.pdf")

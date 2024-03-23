@@ -8,7 +8,7 @@ edge_weights = data.frame()
 
 for (i in 1:3) {
   network = all_networks[['net']][[i]]
-  edge_weight = data_frame(weight = E(network)$weight, network = i)
+  edge_weight = data.frame(weight = E(network)$weight, network = i)
   edge_weights = rbind(edge_weights, edge_weight)
 }
 
@@ -28,8 +28,8 @@ b <- 0 - a * 50
 
 final_plot = ggplot() +
   geom_bar(data = summary_data, aes(x = as.factor(network), y = count, fill = Association), stat = "identity", position = "stack", color = 'black') +
-  geom_line(data = positive, aes(x = network, y = a * Positive_Percentage + b), linewidth = 1.2, color = '#951c2a') +
-  scale_fill_manual(values = c("Positive" = "#eb66c1", "Negative" = "#5caeda")) +
+  geom_line(data = positive, aes(x = network, y = a * Positive_Percentage + b), linewidth = 1.2, color = 'black') +
+  scale_fill_manual(values = c("Positive" = "#68C2A3", "Negative" = "#B51945")) +
   scale_y_continuous(expand = c(0,0), sec.axis = sec_axis(~ (. - b) / a, name = "Positive Interactions (%)")) +
   labs(x = "pH", y = 'No. interactions') +
   theme_classic() +
@@ -58,6 +58,7 @@ l = c(
 
 three_in_one = plot1 + plot2 + final_plot + plot_layout(design = l)
 
-# ggsave('Figures/three_in_one.png', three_in_one, 
-#        width = 15,
-#        height = 13)
+ggsave('Figures/three_in_one.svg', three_in_one,
+       device = 'svg',
+       width = 15,
+       height = 13)
